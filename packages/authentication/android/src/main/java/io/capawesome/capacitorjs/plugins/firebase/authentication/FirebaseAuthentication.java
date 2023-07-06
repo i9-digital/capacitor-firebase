@@ -491,8 +491,15 @@ public class FirebaseAuthentication {
                 plugin.getActivity(),
                 task -> {
                     if (task.isSuccessful()) {
-                        FirebaseUser user = getCurrentUser();
-                        JSObject signInResult = FirebaseAuthenticationHelper.createSignInResult(user, null, null, null, null, null);
+                        AuthResult authResult = task.getResult();
+                        JSObject signInResult = FirebaseAuthenticationHelper.createSignInResult(
+                            authResult.getUser(),
+                            authResult.getCredential(),
+                            null,
+                            null,
+                            null,
+                            authResult.getAdditionalUserInfo()
+                        );
                         call.resolve(signInResult);
                     } else {
                         Exception exception = task.getException();
