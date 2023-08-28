@@ -1,6 +1,6 @@
 {
   "name": "@capacitor-firebase/messaging",
-  "version": "5.0.1",
+  "version": "5.1.0",
   "description": "Capacitor plugin for Firebase Cloud Messaging (FCM).",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -74,7 +74,7 @@
   },
   "peerDependencies": {
     "@capacitor/core": "^5.0.0",
-    "firebase": "^9.0.0"
+    "firebase": "^9.0.0 || ^10.0.0"
   },
   "peerDependenciesMeta": {
     "firebase": {
