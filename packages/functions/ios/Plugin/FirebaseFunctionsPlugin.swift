@@ -16,11 +16,21 @@ public class FirebaseFunctionsPlugin: CAPPlugin {
     }
 
     @objc func httpsCallable(_ call: CAPPluginCall) {
-        let appInstanceId = implementation?.httpsCallable()
-        var result = JSObject()
-        if appInstanceId != nil {
-            result["appInstanceId"] = appInstanceId
+        guard let name = call.getString("name"),
+              let data = call.getObject("data") else {
+            call.reject("Missing parameters")
+            return
         }
-        call.resolve(result)
+
+        implementation?.httpsCallable(name: name, data: data, completion:
+          { resultData, error in
+            if let error = error {
+                call.reject(error.localizedDescription)
+                return
+            }
+            var result = JSObject()
+            result["data"] = resultData
+            call.resolve(result)
+        })
     }
 }

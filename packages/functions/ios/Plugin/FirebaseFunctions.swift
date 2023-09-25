@@ -10,28 +10,22 @@ import FirebaseFunctions
         super.init()
     }
 
-    @objc public func httpsCallable(_ call: CAPPluginCall) {
-        guard let name = call.getString("name"),
-              let data = call.getObject("data") else {
-            call.reject("Missing parameters")
-            return
-        }
+    public func httpsCallable(name: String, data: [String: Any], completion: @escaping (String?, Error?) -> Void) {
         
-        functions.httpsCallable(name).call(data) { result, error in
-            if let error = error as NSError? {
-                if error.domain == FunctionsErrorDomain {
-                    let code = FunctionsErrorCode(rawValue: error.code)
-                    let message = error.localizedDescription
-                    let details = error.userInfo[FunctionsErrorDetailsKey]
-                }
-                call.reject(error.localizedDescription, nil, error)
+        functions.httpsCallable(name).call(data) { (result, error) in
+            if let error = error {
+                completion(nil,error)
                 return
             }
-
-            if let resultData = (result?.data as? [String: Any?]) {
-                let resultJSObject = JSObject(data: resultData)
-                call.resolve(resultJSObject)
+            
+            if let resultData = result?.data {
+                completion(resultData as? String, nil)
+            } else {
+                let unexpectedDataError = NSError(domain: "CapacitorFirebase.Functions", code: 500, userInfo: nil)
+                completion(nil, unexpectedDataError)
             }
         }
     }
+
+
 }
